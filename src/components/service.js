@@ -1,5 +1,4 @@
 import Axios from 'axios'
-const getContent = () => Axios.get('https://cp.nhungtruyen.com/api/chapters/1698913999?enable_fanfic=0&source_id=78965&index=900&refresh=1').then(({ data }) => data._data.content)
 const getAuth = () => Axios.get('http://localhost:8081/token').then(({ data }) => data)
 const getChunks = (content, tokenS1) => Axios.post('https://learningtools.onenote.com/learningtoolsapi/cognitive/v2.0/GetContentModelForReader', {
   "data": {
@@ -43,9 +42,15 @@ const getChunkAudio = (chunk, tokenS2) => Axios.post('https://learningtools.onen
 }).then(({ data }) => data)
   .then(data => data?.data?.sb?.[0]?.ad?.replace('data:audio/mpeg;base64,', ''))
 
+const getSources = () => Axios.get('https://cp.nhungtruyen.com/api/books/17039/newest-chapters').then(({ data }) => data._data)
+const getChapters = (params) => Axios.get('https://cp.nhungtruyen.com/api/chapters', { params }).then(({ data }) => data._data)
+const getContent = (params) => Axios.get(`https://cp.nhungtruyen.com/api/chapters/${new Date().getTime()}`, { params }).then(({ data }) => data._data)
+
 export {
   getAuth,
   getChunks,
   getChunkAudio,
-  getContent
+  getContent,
+  getSources,
+  getChapters
 }

@@ -6,10 +6,12 @@ import moment from 'moment'
 import { useLoadingBar, useNotification } from 'naive-ui'
 import Emitter from 'tiny-emitter/instance'
 import {
-  getContent as svcGetContent,
   getAuth as svcGetAuth,
   getChunks as svcGetChunks,
   getChunkAudio as svcGetChunkAudio,
+  getSources as svcGetSources,
+  getChapters as svcGetChapters,
+  getContent as svcGetContent,
 } from './service'
 import {
   generateReportTimeBoard,
@@ -24,6 +26,9 @@ const stageMessageAudio = ref('')
 const durationTimeAudio = ref('')
 const slideValue = ref('')
 const slideValueMax = ref(100)
+const formData = ref({})
+const sourcesOptions = ref([])
+const chaptersOptions = ref([])
 
 const formatTime = (seconds = 0) => {
   const duration = moment.duration(seconds || Number(seconds) || 0, 'seconds');
@@ -42,7 +47,10 @@ const registerEventAudio = () => {
       player.value.currentTime = currentTime
       player.value.play()
     } else {
-      console.log('Next Audio')
+      const currentChapterIndex = chaptersOptions.value.findIndex(ch => ch.id === formData.value.chapter_id)
+      const chapterFound = chaptersOptions.value[currentChapterIndex + 1]
+      formData.value.chapter_id = chapterFound.id
+      handlerChapterPlay(chapterFound)
     }
   }
   const handlerTimeupdate = () => {
@@ -57,12 +65,34 @@ const registerEventAudio = () => {
 const handlerSeeking = (seekingValue) => {
   player.value.currentTime = seekingValue
 }
-onMounted(async () => {
-  registerEventAudio()
+
+const handlerGetSources = async () => {
+  const sources = await svcGetSources()
+  console.log(sources, 'sources')
+  sourcesOptions.value = sources.map(s => ({ label: s.web.title, value: s.id }))
+}
+
+const handlerChangeSource = async () => {
+  const chapters = await svcGetChapters({ source_id: formData.value.source_id })
+  Object.keys(chapters).forEach(index => {
+    const chapter = chapters[index]
+    chaptersOptions.value.push({ label: chapter.name, value: chapter.id, ...chapter })
+  })
+}
+
+const handlerChapterChange = async () => {
+  const chapterFound = chaptersOptions.value.find(ch => ch.id === formData.value.chapter_id)
+  handlerChapterPlay(chapterFound)
+}
+
+const handlerChapterPlay = async (chapter) => {
+  srcMp3.value = ''
+  player.value.src = ''
+  const _chapter = chapter || chaptersOptions[0]
   stageMessageAudio.value = 'Đang cấp quyền...'
   const tokenS1 = await svcGetAuth()
   stageMessageAudio.value = 'Đang cấp content...'
-  const content = await svcGetContent()
+  const { content } = await svcGetContent({ source_id: _chapter.source_id, index: _chapter.index, enable_fanfic: 0, refresh: 1 })
   stageMessageAudio.value = 'Đang cấp chunks...'
   const dataChunks = await svcGetChunks(content, tokenS1)
   const tokenS2 = dataChunks.meta.sessionToken
@@ -84,6 +114,11 @@ onMounted(async () => {
     }
     stageMessageAudio.value = `Hoàn tất`
   }
+}
+
+onMounted(() => {
+  handlerGetSources()
+  registerEventAudio()
 })
 
 const templateTryCatch = async (fn) => {
@@ -108,6 +143,14 @@ const templateTryCatch = async (fn) => {
 <template>
   <div class="container flex flex-col pb-5">
     <h1 class="flex-initial text-center text-5xl">TEST</h1>
+    <div class="flex-initial w-full mx-auto">
+      <n-select v-model:value="formData.source_id" filterable placeholder="Select a source" :options="sourcesOptions"
+        @update:value="handlerChangeSource" />
+    </div>
+    <div class="flex-initial w-full mx-auto mt-2">
+      <n-select v-model:value="formData.chapter_id" filterable placeholder="Select a chapter"
+        @update:value="handlerChapterChange" :options="chaptersOptions" />
+    </div>
     <div class="flex-initial w-full mx-auto">
       <audio controls class="hidden" ref="player"></audio>
       <n-slider v-model:value="slideValue" :step="1" :min="0" :max="slideValueMax" @update:value="handlerSeeking"
