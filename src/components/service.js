@@ -42,7 +42,7 @@ const getChunkAudio = (chunk, tokenS2) => Axios.post('https://learningtools.onen
 }).then(({ data }) => data)
   .then(data => data?.data?.sb?.[0]?.ad?.replace('data:audio/mpeg;base64,', ''))
 
-const getSources = () => Axios.get('https://cp.nhungtruyen.com/api/books/17039/newest-chapters').then(({ data }) => data._data)
+const getSources = () => Axios.get('https://cp.nhungtruyen.com/api/books/1901/newest-chapters').then(({ data }) => data._data)
 const getChapters = (params) => Axios.get('https://cp.nhungtruyen.com/api/chapters', { params }).then(({ data }) => data._data)
 const getContent = (params) => Axios.get(`https://cp.nhungtruyen.com/api/chapters/${new Date().getTime()}`, { params }).then(({ data }) => data._data)
 
