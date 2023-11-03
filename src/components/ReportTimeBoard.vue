@@ -120,12 +120,16 @@ const templateTryCatch = async (fn) => {
       <div class="flex justify-center text-xs">
         <n-button tertiary circle @click="player.play()" v-if="player.paused">
           <template #icon>
-            <n-icon><Play /></n-icon>
+            <n-icon>
+              <Play />
+            </n-icon>
           </template>
         </n-button>
         <n-button tertiary circle @click="player.pause()" v-else>
           <template #icon>
-            <n-icon><Pause /></n-icon>
+            <n-icon>
+              <Pause />
+            </n-icon>
           </template>
         </n-button>
       </div>
