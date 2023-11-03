@@ -1,5 +1,5 @@
 import Axios from 'axios'
-const getContent = () => Axios.get('https://cp.nhungtruyen.com/api/chapters/1698913999?enable_fanfic=0&source_id=78965&index=917&refresh=1').then(({ data }) => data._data.content)
+const getContent = () => Axios.get('https://cp.nhungtruyen.com/api/chapters/1698913999?enable_fanfic=0&source_id=78965&index=900&refresh=1').then(({ data }) => data._data.content)
 const getAuth = () => Axios.get('http://localhost:8081/token').then(({ data }) => data)
 const getChunks = (content, tokenS1) => Axios.post('https://learningtools.onenote.com/learningtoolsapi/cognitive/v2.0/GetContentModelForReader', {
   "data": {

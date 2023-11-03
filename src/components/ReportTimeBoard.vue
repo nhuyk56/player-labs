@@ -117,7 +117,7 @@ const templateTryCatch = async (fn) => {
         <div>{{ stageMessageAudio }}</div>
         <div>{{ formatTime(durationTimeAudio) }}</div>
       </div>
-      <div class="flex justify-center text-xs">
+      <div class="flex justify-center text-xs" :disabled="!srcMp3">
         <n-button tertiary circle @click="player.play()" v-if="player.paused">
           <template #icon>
             <n-icon>
