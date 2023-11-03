@@ -88,7 +88,7 @@ const handlerChapterChange = async () => {
 
 const handlerChapterPlay = async (chapter) => {
   srcMp3.value = ''
-  player.value.src = 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA=='
+  player.value.src = ''
   const _chapter = chapter || chaptersOptions[0]
   stageMessageAudio.value = 'Đang cấp quyền...'
   const tokenS1 = await svcGetAuth()
@@ -109,7 +109,7 @@ const handlerChapterPlay = async (chapter) => {
     const audio = await svcGetChunkAudio(chunks[i], tokenS2)
     items.push(audio)
     srcMp3.value = 'data:audio/mpeg;base64,' + items.join('')
-    if (['', 0, undefined, null].includes(player.value.src)) {
+    if (i === 0) {
       player.value.src = srcMp3.value
       player.value.play()
     }
