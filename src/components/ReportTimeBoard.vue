@@ -89,6 +89,11 @@ const handlerChapterChange = async () => {
 const handlerChapterPlay = async (chapter) => {
   srcMp3.value = ''
   player.value.src = ''
+  currentTimeAudio.value = 0
+  stageMessageAudio.value = '...'
+  durationTimeAudio.value = 0
+  slideValue.value = 0
+  slideValueMax.value = 100
   const _chapter = chapter || chaptersOptions[0]
   stageMessageAudio.value = 'Đang cấp quyền...'
   const tokenS1 = await svcGetAuth()
