@@ -31,6 +31,7 @@ const sourcesOptions = ref([])
 const chaptersOptions = ref([])
 
 const formatTime = (seconds = 0) => {
+  seconds = [0, '0', '', Infinity, null, undefined, ''].includes(seconds) ? 0 : seconds
   const duration = moment.duration(seconds || Number(seconds) || 0, 'seconds');
   const formattedTime = moment.utc(duration.asMilliseconds()).format('mm:ss');
   return formattedTime;
@@ -87,7 +88,7 @@ const handlerChapterChange = async () => {
 
 const handlerChapterPlay = async (chapter) => {
   srcMp3.value = ''
-  player.value.src = ''
+  player.value.src = 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA=='
   const _chapter = chapter || chaptersOptions[0]
   stageMessageAudio.value = 'Đang cấp quyền...'
   const tokenS1 = await svcGetAuth()
